@@ -77,7 +77,7 @@ def game():
         pygame.draw.rect(screen, header_margin, [0, 0, size[0], header_margin])
         text_total = courier.render(f'Total: {total}', 0, color_rect)
         text_speed = courier.render(f'Speed: {speed}', 0, color_rect)
-        text_lost = courier.render('You Lost!(C or Q)', 0, color_rect)
+        text_lost = courier.render('You Lose!(C or Q)', 0, color_rect)
         screen.blit(text_total, (size_block, size_block))
         screen.blit(text_speed, (size_block+230, size_block))
 
