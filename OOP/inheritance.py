@@ -68,6 +68,31 @@ obj_c.b  # 'b'
 obj_c.c  # 'c'
 
 
+"===================Проблемы множественного наследования==================="
+# 1. Проблема ромба = решённая проблема: начиная с версии 2.3 (с помощью MRO - method resolution order)
+
+class A: ...
+
+class B(A): ...
+class C(A): ...
+
+class D(B, C): ...
+print(D.mro()) # [<class '__main__.D'>, <class '__main__.B'>, <class '__main__.C'>, <class '__main__.A'>, <class 'object'>]
+
+
+# 2. Проблема перекрестного наследования - нерешённая проблема
+
+class A: ...
+class B: ...
+
+class C(A, B): ...
+class D(B, A): ...
+
+# class E(C, D): ...
+# TypeError: Cannot create a consistent method resolution order (MRO) for bases A, B
+
+
+
 "===================Виды наследования==================="
 # одиночное наследование
 # множественное наследование
