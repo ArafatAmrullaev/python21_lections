@@ -102,3 +102,143 @@ DECIMAL, NUMERIC, REAL - числа с плавающей точкой
 
 # Special
 PRIMARY KEY - делает указанное поле основным уникальным ключом
+FOREIGN KEY - ссылается на запись в другой таблице по id
+
+Условия
+Условия пишутся в конце с помощью ключевого слова WHERE
+# Арифметические символы
+# Синтаксис схож с питоном
+= - Равно
+!= - Не равно
+> - Больше
+>= - Больше или равно
+... 
+Пример
+SELECT name, age FROM human WHERE age > 18;
+
+# LIKE ILIKE
+LIKE - ищет сходства в строке, чувствителен к регистру
+ILIKE - ищет сходства в строке, НЕчувствителен к регистру
+% - Означает, что на его месте могут быть любые символы
+
+# Получим все имена, начинающиеся на 'T' или на 't'
+SELECT name FROM human WHERE name ILIKE 'T%';
+
+# Получим все имена, заканчивающиеся на 't'
+SELECT name FROM human WHERE name LIKE '%t';
+
+
+
+Cвязи
+Есть 3 вида связей:
+# Один к одному
+Один автор - Одна биография
+Одна страна - Один гимн
+Один человек - Одна жизнь
+
+# Один ко многим
+Один автор - много книг
+Одна семья - много машин
+Один аккаунт - много лайков
+Один пост - много комментариев
+
+# Много ко многим
+Много учителей у студентов, много студентов у учителей
+У жанра много фильмов, у фильма много жанров
+У актера много фильмов, у фильма много актеров
+
+# Сначала создается таблица, у которой нет связей
+
+
+# Синтаксис связи один ко многим
+CREATE TABLE <имя таблицы> (
+    id SERIAL PRIMARY KEY,
+    ...
+    some_id INT,
+
+    CONSTRAINT <название переменной (любое)>
+    FOREIGN KEY (some_id)
+    REFERENCES <таблица, на которую ссылаются>(id)
+);
+
+# Получение данных из таблиц по связям
+SELECT <поле первой таблицы>, <вторая таблица>.<поле>
+FROM  <первая таблица>
+JOIN <вторая таблица>
+ON <по каким полям соединяем> (напр: some_id = some.id)
+# Опционально 
+WHERE <условия>;
+
+# Синтаксис таблицы много ко многим
+
+CREATE TABLE <имя таблицы> (
+    <id ключа первой таблицы> INT,
+    <id ключа второй таблицы> INT,
+    <id ключа третьей таблицы> INT,
+    ...
+
+    CONSTRAINT <любое имя>
+    FOREIGN KEY (<id ключа первой таблицы>) 
+    REFERENCES <первая таблица>(id),
+
+    CONSTRAINT <любое имя2>
+    FOREIGN KEY (<id ключа второй таблицы>) 
+    REFERENCES <вторая таблица>(id),
+    ...
+)
+
+# На настоящем примере
+CREATE TABLE doctor (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(25),
+    experience SMALLINT
+);
+
+CREATE TABLE patient (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(25)
+);
+
+CREATE TABLE doctor_patient (
+    doctor_id INT,
+    patient_id INT,
+
+    CONSTRAINT fk_doctor
+    FOREIGN KEY (doctor_id) 
+    REFERENCES doctor(id),
+
+    CONSTRAINT fk_patient
+    FOREIGN KEY (patient_id) 
+    REFERENCES patient(id)
+);
+
+# Запись данных
+INSERT INTO doctor (name, experience)
+VALUES ('Ted', 20);
+
+INSERT INTO doctor (name, experience)
+VALUES ('Bob', 4);
+
+
+INSERT INTO patient (name)
+VALUES ('Alex');
+
+INSERT INTO patient (name)
+VALUES ('Dave');
+
+
+INSERT INTO doctor_patient 
+    (doctor_id, patient_id)
+VALUES (1, 2);
+
+INSERT INTO doctor_patient 
+    (doctor_id, patient_id)
+VALUES (2, 2);
+
+# Получение данных
+SELECT doctor.name as Doctor, 
+       patient.name as Patient
+FROM doctor
+JOIN doctor_patient as dp ON doctor.id = dp.doctor_id
+JOIN patient ON patient.id = dp.patient_id;
+
